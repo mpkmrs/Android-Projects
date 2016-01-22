@@ -1,0 +1,207 @@
+package com.mpk.myprojects;
+
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import java.util.Calendar;
+
+public class AgeActivity extends Activity {
+
+    EditText start_date, end_date, result_years, result_monhts, result_days , result_tot_days,
+            result_tot_hrs, result_tot_min, result_tot_mis;
+    Button bstart_date, bend_date;
+    int startyear = 1990,startmonth=06,startday=31,endyear,endmonth,endday;
+    int resultyear,resultmonth,resultdays;
+    private LinearLayout layoutResult;
+    final static int START_DATE_DIALOG = 0;
+    final static int END_DATE_DIALOG = 1;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_age);
+        start_date = (EditText)findViewById(R.id.textSDate);
+        end_date = (EditText)findViewById(R.id.textEDate);
+        result_years = (EditText)findViewById(R.id.textResYears);
+        result_monhts = (EditText)findViewById(R.id.textResMonths);
+        result_days = (EditText)findViewById(R.id.textResDays);
+        result_tot_days = (EditText)findViewById(R.id.textResTotDays);
+        result_tot_hrs = (EditText)findViewById(R.id.textResTotHrs);
+        result_tot_min = (EditText)findViewById(R.id.textResTotMin);
+        result_tot_mis = (EditText)findViewById(R.id.textResTotMis);
+
+        bstart_date = (Button)findViewById(R.id.buttonSDate);
+        bend_date = (Button)findViewById(R.id.buttonEDate);
+
+        layoutResult = (LinearLayout)findViewById(R.id.textResultVisible);
+        Calendar nowDate = Calendar.getInstance();
+        endday = nowDate.get(Calendar.DAY_OF_MONTH);
+        endmonth = nowDate.get(Calendar.MONTH);
+        endyear = nowDate.get(Calendar.YEAR);
+    }
+
+    public void showSDateDialog(View v){
+        showDialog(START_DATE_DIALOG);
+    }
+
+    public void showEDateDialog(View v){
+        showDialog(END_DATE_DIALOG);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id){
+            case START_DATE_DIALOG:
+                return strtDateDialog();
+            case END_DATE_DIALOG :
+                return endDateDialog();
+        }
+        return null;
+    }
+
+    public Dialog strtDateDialog(){
+        return  new DatePickerDialog(this,new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker arg0, int selectedSYear, int selectedSMonth, int selectedSDate) {
+                startyear = selectedSYear;
+                startmonth = selectedSMonth+1;
+                startday = selectedSDate;
+                start_date.setText(startday + "/" + startmonth + "/" + startyear);
+            }
+        }, startyear, startmonth, startday);
+    }
+
+    public Dialog endDateDialog(){
+        return  new DatePickerDialog(this,new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker arg0, int selectedEYear, int selectedEMonth, int selectedEDate) {
+                endyear = selectedEYear;
+                endmonth = selectedEMonth+1;
+                endday = selectedEDate;
+                end_date.setText(  endday + "/" + endmonth + "/" + endyear);
+            }
+        }, endyear, endmonth, endday);
+    }
+
+    public void resultAge(View v){
+        if(this.start_date.getText().length()>0 && this.end_date.getText().length()>0) {
+            calculateYear();
+            calculateMonth();
+            calculateDay();
+            calculateTotalDays();
+            if(getResult() == 1) {
+                String resy = resultyear+"";
+                String resm = resultmonth+"";
+                String resd = resultdays+"";
+                result_years.setText(resy);
+                result_monhts.setText(resm);
+                result_days.setText(resd);
+                layoutResult.setVisibility(View.VISIBLE);
+                Toast.makeText(this, "Calculation Done", Toast.LENGTH_LONG).show();
+            }
+        }
+        else
+            Toast.makeText(this,"Please Pick Both dates",Toast.LENGTH_LONG).show();
+    }
+
+    public void calculateYear(){
+        if(endyear>startyear)
+            resultyear = endyear - startyear;
+        else{
+            Toast.makeText(this,"Cheack The Years and Choose Properly",Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    public void calculateMonth(){
+        if(endmonth >= startmonth) {
+            resultmonth = endmonth - startmonth;
+        }else{
+            resultmonth = endmonth - startmonth;
+            resultmonth += 12;
+            resultyear--;
+        }
+    }
+
+    public void calculateDay(){
+        if(endday >= startday){
+            resultdays = endday - startday;
+        }else{
+            resultdays = endday - startday;
+            resultdays += 30;
+            if(resultdays==0) {
+                resultmonth = 11;
+                resultyear--;
+            }else {
+                resultmonth--;
+            }
+        }
+    }
+
+    public void calculateTotalDays(){
+        //two calender Instances
+        Calendar cal1 = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+
+        // Set the date for both of the calendar instance
+        cal1.set(startyear, startmonth, startday);
+        cal2.set(endyear, endmonth, endday);
+
+        // Get the represented date in milliseconds
+        long milis1 = cal1.getTimeInMillis();
+        long milis2 = cal2.getTimeInMillis();
+
+        // Calculate difference in weeks
+        /*int startWeek = cal1.get(Calendar.WEEK_OF_YEAR);
+        int endWeek = cal2.get(Calendar.WEEK_OF_YEAR);
+
+        int weekDifference = endWeek - startWeek;
+        String totw = weekDifference+"";
+        result_tot_days.setText(totw);*/
+
+        // Calculate difference in milliseconds
+        long diff = milis2 - milis1;
+
+        // Calculate difference in days
+        long diffDays = diff / (24 * 60 * 60 * 1000);
+        String totD = diffDays+"";
+       result_tot_days.setText(totD);
+
+        // Calculate difference in hours
+        long diffHours = diff / (60 * 60 * 1000);
+        String totH = diffHours+"";
+        result_tot_hrs.setText(totH);
+
+        // Calculate difference in minutes
+        long diffMinutes = diff / (60 * 1000);
+        String totM = diffMinutes+"";
+        result_tot_min.setText(totM);
+
+        // Calculate difference in seconds
+        long diffSeconds = diff / 1000;
+        String totS = diffSeconds+"";
+        result_tot_mis.setText(totS);
+
+    }
+
+    public int getResult(){
+        return 1;
+    }
+}
+
+
+//Layout File named activity_age.xml
