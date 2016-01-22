@@ -1,3 +1,15 @@
+/*
+This project will show toggle button you can enable or disable WIFI and after enable wifi it will show the available connections in your area please download required layout file
+
+This application access WIFI state of your device so don't forget to give permissions in manifest file
+
+Layout File named activity_notification_toggle.xml
+Please Define Permissions in AndroidManifest.xml
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+*/
+
 package com.mpk.myprojects;
 
 import android.app.Activity;
