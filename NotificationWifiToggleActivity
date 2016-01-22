@@ -98,3 +98,10 @@ public class NotificationWifiToggleActivity extends Activity {
 
 
 //Layout File named activity_notification_toggle.xml
+/*Please Define Permissions in AndroidManifest.xml
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+*/
+
+
